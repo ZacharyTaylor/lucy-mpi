@@ -21,14 +21,12 @@ void master_program_main(int numprocs) {
     vector<string> files = vector<string>();
 
     init_images(files);
-    
-    for (unsigned int i = 0;i < files.size();i++) {
-    cout << files[i] << endl;
-    }
 
     cimg_library::CImg<double> f_psf = get_psf();
 
-    mpi_image_send(f_psf, numprocs, TAG_PSF);
+    for(int i = 1; i < numprocs; i++){
+        mpi_image_send(f_psf, i, TAG_PSF);
+    }
 }
 
 void slave_program_main(MPI_Status stat) {
@@ -53,9 +51,9 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &myid); // and this processes' rank is
 
     if (myid == 0) {
-  //      master_program_main(numprocs);
+        master_program_main(numprocs);
     } else {
-    //    slave_program_main(stat);
+        slave_program_main(stat);
     }
 
     MPI_Finalize(); // MPI Programs end with MPI Finalize; this is a weak
