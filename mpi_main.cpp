@@ -5,24 +5,35 @@
 #include <CImg.h>
 #include <stdio.h>
 #include <string.h>
+#include <vector>
 
 #include "lucy.h"
 #include "mpi_behaviour.h"
-
-using namespace cimg_library;
+#include "files_io.h"
 
 #define TAG_PSF 0
 #define TAG_DATA 1
 
+using namespace std;
+
 void master_program_main(int numprocs) {
-    CImg<double> f_psf = init_psf();
+
+    vector<string> files = vector<string>();
+
+    init_images(files);
+    
+    for (unsigned int i = 0;i < files.size();i++) {
+    cout << files[i] << endl;
+    }
+
+    cimg_library::CImg<double> f_psf = get_psf();
 
     mpi_image_send(f_psf, numprocs, TAG_PSF);
 }
 
 void slave_program_main(MPI_Status stat) {
-    CImg<double> f_psf = mpi_image_receive(TAG_PSF, stat);
-    CImgDisplay main_disp(f_psf, "Base Image");
+    cimg_library::CImg<double> f_psf = mpi_image_receive(TAG_PSF, stat);
+    cimg_library::CImgDisplay main_disp(f_psf, "Base Image");
 
     while (!main_disp.is_closed()) {
     }
@@ -42,9 +53,9 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &myid); // and this processes' rank is
 
     if (myid == 0) {
-        master_program_main(numprocs);
+  //      master_program_main(numprocs);
     } else {
-        slave_program_main(stat);
+    //    slave_program_main(stat);
     }
 
     MPI_Finalize(); // MPI Programs end with MPI Finalize; this is a weak
