@@ -12,7 +12,7 @@ using namespace cimg_library;
 
 void mpi_image_send(CImg<double> image, int numprocs, int tag);
 
-CImg<double> mpi_image_receive(int tag, MPI_Status stat);
+CImg<double> mpi_image_receive(int tag, int i, MPI_Status stat);
 
 #endif	/* MPI_BEHAVIOUR_H */
 

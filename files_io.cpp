@@ -1,5 +1,13 @@
 #include "files_io.h"
 
+void save_image(cimg_library::CImg<double> output, int i){
+    string outname = "output-";
+    stringstream ss;
+    ss << i;
+    outname.append(ss.str());
+    outname.append(".bmp");
+    output.save(outname.c_str());
+}
 cimg_library::CImg<double> get_psf(void){
     //load image
     cimg_library::CImg<double> temp_psf_img("psf.bmp");

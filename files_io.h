@@ -8,8 +8,11 @@
 #include <string>
 #include <iostream>
 #include <CImg.h>
+#include <sstream>
 
 using namespace std;
+
+void save_image(cimg_library::CImg<double> output, int i);
 
 cimg_library::CImg<double> get_psf(void);
 

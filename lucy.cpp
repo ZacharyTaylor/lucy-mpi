@@ -1,6 +1,6 @@
 #include "lucy.h"
 
-void lucy_run(CImg<double> base_img, CImg<double> f_psf){
+CImg<double> lucy_run(CImg<double> base_img, CImg<double> f_psf){
 
     CImg<double> f_work;
     CImg<double> work_img = base_img;
@@ -23,7 +23,7 @@ void lucy_run(CImg<double> base_img, CImg<double> f_psf){
         work_img = work_img.get_normalize(0, 255);
     }
 
-    base_img = work_img;
+    return work_img;
 }
 
 
