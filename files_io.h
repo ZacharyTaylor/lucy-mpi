@@ -17,9 +17,9 @@ cimg_library::CImg<double> get_image(vector<string> files, int i);
 
 bool has_ending (std::string const &fullString, std::string const &ending);
 
-bool get_dir (string dir, vector<string> &files);
+bool get_dir (string dir, vector<string> *files);
 
-bool init_images(vector<string> files);
+bool init_images(vector<string> *files);
 
 #endif	/* FILES_IO_H */
 

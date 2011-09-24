@@ -37,7 +37,7 @@ bool has_ending (std::string const &fullString, std::string const &ending){
     }
 }
 
-bool get_dir (string dir, vector<string> &files){
+bool get_dir (string dir, vector<string> *files){
 DIR *dp;
 struct dirent *dirp;
 if((dp = opendir(dir.c_str())) == NULL) {
@@ -46,14 +46,14 @@ if((dp = opendir(dir.c_str())) == NULL) {
 
 while ((dirp = readdir(dp)) != NULL) {
     if(has_ending(string(dirp->d_name), ".bmp")){
-        files.push_back(string(dirp->d_name));
+        files->push_back(string(dirp->d_name));
     }
 }
 closedir(dp);
 return true;
 }
 
-bool init_images(vector<string> files){
+bool init_images(vector<string> *files){
     string dir = string(".");
     return get_dir(dir,files);
 }

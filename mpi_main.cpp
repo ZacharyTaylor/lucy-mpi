@@ -20,18 +20,33 @@ void master_program_main(int numprocs) {
 
     vector<string> files = vector<string>();
 
-    init_images(files);
-
+    init_images(&files);
     cimg_library::CImg<double> f_psf = get_psf();
 
     for(int i = 1; i < numprocs; i++){
         mpi_image_send(f_psf, i, TAG_PSF);
     }
+
+    int n = 0;
+
+    for(int i = 1; i < numprocs; i++){
+        cimg_library::CImg<double> image = get_image(files, n);
+        mpi_image_send(image, i, TAG_PSF);
+        n++;
+    }
+
+
 }
 
 void slave_program_main(MPI_Status stat) {
+
     cimg_library::CImg<double> f_psf = mpi_image_receive(TAG_PSF, stat);
-    cimg_library::CImgDisplay main_disp(f_psf, "Base Image");
+
+    cimg_library::CImg<double> image = mpi_image_receive(TAG_PSF, stat);
+
+    lucy_run(image, f_psf);
+
+    cimg_library::CImgDisplay main_disp(image, "Base Image");
 
     while (!main_disp.is_closed()) {
     }
@@ -41,7 +56,7 @@ int main(int argc, char *argv[]) {
     char idstr[32];
     int numprocs;
     int myid;
-    int i;
+
     MPI_Status stat;
 
     MPI_Init(&argc, &argv); // all MPI programs start with MPI_Init; all 'N'

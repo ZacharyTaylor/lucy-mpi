@@ -7,7 +7,7 @@
 
 using namespace cimg_library;
 
-CImg<double> lucy_run(CImg<double> base_img, CImg<double> f_psf);
+void lucy_run(CImg<double> base_img, CImg<double> f_psf);
 
 #endif	/* LUCY_H */
 
