@@ -10,8 +10,8 @@ CImg<double> lucy_run(CImg<double> base_img, CImg<double> psf_img) {
 
     in_img = base_img;
 
-#pragma omp parallel
-    {
+//#pragma omp parallel
+  //  {
         //loop of iterations
         for (unsigned int it = 0; it < 10; it++) {
             //loop over x of image
@@ -30,9 +30,9 @@ CImg<double> lucy_run(CImg<double> base_img, CImg<double> psf_img) {
                                 int y_offset = y_img + y_psf - (psf_img._height / 2);
 
                                 //if inside bounds
-                                if ((x_offset < in_img._width) &&
+                                if ((((unsigned int)x_offset) < in_img._width) &&
                                         (x_offset >= 0) &&
-                                        (y_offset < in_img._height) &&
+                                        (((unsigned int)y_offset) < in_img._height) &&
                                         (y_offset >= 0)) {
 
                                     //performs first convolution
@@ -62,9 +62,9 @@ CImg<double> lucy_run(CImg<double> base_img, CImg<double> psf_img) {
                                 int y_offset = y_img + y_psf - (psf_img._height / 2);
 
                                 //if inside bounds
-                                if ((x_offset < in_img._width) &&
+                                if ((((unsigned int)x_offset) < in_img._width) &&
                                         (x_offset >= 0) &&
-                                        (y_offset < in_img._height) &&
+                                        (((unsigned int)y_offset) < in_img._height) &&
                                         (y_offset >= 0)) {
 
                                     //performs second convolution
@@ -96,6 +96,6 @@ CImg<double> lucy_run(CImg<double> base_img, CImg<double> psf_img) {
                 }
             }
         }
-    }
+    //}
     return out_img;
 }
