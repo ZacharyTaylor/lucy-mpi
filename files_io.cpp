@@ -11,7 +11,7 @@ void save_image(cimg_library::CImg<double> output, int i){
 cimg_library::CImg<double> get_psf(void){
     //load image
     cimg_library::CImg<double> temp_psf_img("psf.bmp");
-    cimg_library::CImg<double> psf_img(1024,1024,1,1,0);
+    cimg_library::CImg<double> psf_img(3,3,1,1,0);
 
     //cimg_forXY(temp_psf_img,x,y) {
     //    psf_img(x,y,0,0) = temp_psf_img(x,y,0,0);
@@ -25,12 +25,8 @@ cimg_library::CImg<double> get_psf(void){
     psf_img(0,2,0,0) = 0.1070;
     psf_img(1,2,0,0) = 0.1131;
     psf_img(2,2,0,0) = 0.1070;
-
-
-    //take forier transform of psf
-    cimg_library::CImg<double> f_psf = psf_img.get_FFT('z', false)[0];
-
-    return f_psf;
+    
+    return psf_img;
 }
 
 cimg_library::CImg<double> get_image(vector<string> files, int i){

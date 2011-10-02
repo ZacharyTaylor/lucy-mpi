@@ -13,18 +13,18 @@ CImg<double> lucy_run(CImg<double> base_img, CImg<double> psf_img) {
 #pragma omp parallel
     {
         //loop of iterations
-        for (int it = 0; it < 10; it++) {
+        for (unsigned int it = 0; it < 10; it++) {
             //loop over x of image
-            for (int x_img = 0; x_img < in_img._width; x_img++) {
+            for (unsigned int x_img = 0; x_img < in_img._width; x_img++) {
                 //loop over y of image
-                for (int y_img = 0; y_img < in_img._height; y_img++) {
+                for (unsigned int y_img = 0; y_img < in_img._height; y_img++) {
                     //loop over color channels of image
-                    for (int c_img = 0; c_img < in_img._spectrum; c_img++) {
+                    for (unsigned int c_img = 0; c_img < in_img._spectrum; c_img++) {
                         int_img(x_img, y_img, 0, c_img) = 0;
                         //loop over x of psf
-                        for (int x_psf = 0; x_psf < psf_img._width; x_psf++) {
+                        for (unsigned int x_psf = 0; x_psf < psf_img._width; x_psf++) {
                             //loop over y of psf
-                            for (int y_psf = 0; y_psf < psf_img._height; y_psf++) {
+                            for (unsigned int y_psf = 0; y_psf < psf_img._height; y_psf++) {
                                 //calculate x and y offset for convolution
                                 int x_offset = x_img + x_psf - (psf_img._width / 2);
                                 int y_offset = y_img + y_psf - (psf_img._height / 2);
@@ -47,16 +47,16 @@ CImg<double> lucy_run(CImg<double> base_img, CImg<double> psf_img) {
             }
 
             //loop over x of image
-            for (int x_img = 0; x_img < in_img._width; x_img++) {
+            for (unsigned int x_img = 0; x_img < in_img._width; x_img++) {
                 //loop over y of image
-                for (int y_img = 0; y_img < in_img._height; y_img++) {
+                for (unsigned int y_img = 0; y_img < in_img._height; y_img++) {
                     //loop over color channels of image
-                    for (int c_img = 0; c_img < in_img._spectrum; c_img++) {
+                    for (unsigned int c_img = 0; c_img < in_img._spectrum; c_img++) {
                         out_img(x_img, y_img, 0, c_img) = 0;
                         //loop over x of psf
-                        for (int x_psf = 0; x_psf < psf_img._width; x_psf++) {
+                        for (unsigned int x_psf = 0; x_psf < psf_img._width; x_psf++) {
                             //loop over y of psf
-                            for (int y_psf = 0; y_psf < psf_img._height; y_psf++) {
+                            for (unsigned int y_psf = 0; y_psf < psf_img._height; y_psf++) {
                                 //calculate x and y offset for convolution
                                 int x_offset = x_img + x_psf - (psf_img._width / 2);
                                 int y_offset = y_img + y_psf - (psf_img._height / 2);
@@ -81,11 +81,11 @@ CImg<double> lucy_run(CImg<double> base_img, CImg<double> psf_img) {
             in_img = out_img;
         }
         //ensures all pixels are still in the 0 to 255 range
-        for (int x_img = 0; x_img < base_img._width; x_img++) {
+        for (unsigned int x_img = 0; x_img < base_img._width; x_img++) {
             //loop over y of image
-            for (int y_img = 0; y_img < base_img._height; y_img++) {
+            for (unsigned int y_img = 0; y_img < base_img._height; y_img++) {
                 //loop over color channels of image
-                for (int c_img = 0; c_img < base_img._spectrum; c_img++) {
+                for (unsigned int c_img = 0; c_img < base_img._spectrum; c_img++) {
 
                     //limit values to 0 to 255 range
                     if (out_img(x_img, y_img, 0, c_img) > 255) {

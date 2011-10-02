@@ -8,12 +8,14 @@
 #include <vector>
 
 #include "lucy.h"
-#include "mpi_behaviour.h"
 #include "files_io.h"
 
 #define TAG_PSF 0
 #define TAG_DATA 1
 #define TAG_END 2
+
+#define IMAGE_WIDTH 1024
+#define IMAGE_HEIGHT 1024
 
 using namespace std;
 
@@ -24,13 +26,13 @@ void master_program_main(MPI_Status stat, int numprocs) {
     init_images(&files);
 
     //get forier transform of psf
-    cimg_library::CImg<double> f_psf = get_psf();
-
+    cimg_library::CImg<double> psf = get_psf();
+    printf("loaded the psf\n");
     //send transformed psf to all the slaves
     for (int i = 1; i < numprocs; i++) {
-        mpi_image_send(f_psf, i, TAG_PSF);
+        MPI_Send(psf._data, psf._height*psf._width, MPI_DOUBLE, i, TAG_PSF, MPI_COMM_WORLD);
     }
-
+    printf("sent the psf\n");
     //initilize which images have been/ are being processed
     int processing[numprocs];
     unsigned int upto = 0;
@@ -43,7 +45,7 @@ void master_program_main(MPI_Status stat, int numprocs) {
 
         cimg_library::CImg<double> image = get_image(files, processing[i]);
         printf("sent %s to slave %i\n", files[processing[i]].c_str(), i);
-        mpi_image_send(image, i, TAG_DATA);
+        MPI_Send(image._data, image._height*image._width, MPI_DOUBLE, i, TAG_DATA, MPI_COMM_WORLD);
     }
 
     printf("master in while loop\n");
@@ -55,11 +57,12 @@ void master_program_main(MPI_Status stat, int numprocs) {
             MPI_Iprobe(i, TAG_DATA, MPI_COMM_WORLD, &flag, &stat);
             if (flag == true) {
                 //get output image
-                cimg_library::CImg<double> output = mpi_image_receive(TAG_DATA, i, stat);
+                cimg_library::CImg<double> output(IMAGE_WIDTH, IMAGE_HEIGHT, 1, 1, 0);
+                MPI_Recv(output._data, IMAGE_WIDTH*IMAGE_HEIGHT, MPI_DOUBLE, i, TAG_DATA, MPI_COMM_WORLD, &stat);
                 printf("master got %s back from slave %i and saved as output-%i\n", files[processing[i]].c_str(), i, processing[i]);
 
                 //save it
-                //save_image(output, processing[i]);
+                save_image(output, processing[i]);
 
                 doneto++;
 
@@ -70,8 +73,8 @@ void master_program_main(MPI_Status stat, int numprocs) {
 
                     cimg_library::CImg<double> image = get_image(files, processing[i]);
                     printf("sent %s to slave %i\n", files[processing[i]].c_str(), i);
-                    save_image(image, 1);
-                    mpi_image_send(image, i, TAG_DATA);
+
+                    MPI_Send(image._data, image._height*image._width, MPI_DOUBLE, i, TAG_DATA, MPI_COMM_WORLD);
                 } else if (doneto == files.size()) {
                     all_done = true;
                     for (int i = 1; i < numprocs; i++) {
@@ -88,7 +91,8 @@ void master_program_main(MPI_Status stat, int numprocs) {
 
 void slave_program_main(MPI_Status stat) {
 
-    cimg_library::CImg<double> f_psf = mpi_image_receive(TAG_PSF, 0, stat);
+    CImg<double> psf(3, 3, 1, 1, 0);
+    MPI_Recv(psf._data, 9, MPI_DOUBLE, 0, TAG_PSF, MPI_COMM_WORLD, &stat);
 
     while (true) {
         printf("slave starting\n");
@@ -109,13 +113,13 @@ void slave_program_main(MPI_Status stat) {
             break;
         } else if (flag_image) {
             //get new image
-            cimg_library::CImg<double> image = mpi_image_receive(TAG_DATA, 0, stat);
-                    save_image(image, 2);
+            CImg<double> image(IMAGE_WIDTH, IMAGE_HEIGHT, 1, 1, 0);
+            MPI_Recv(image._data, IMAGE_WIDTH*IMAGE_HEIGHT, MPI_DOUBLE, 0, TAG_DATA, MPI_COMM_WORLD, &stat);
             //process image
-            image = lucy_run(image, f_psf);
+            image = lucy_run(image, psf);
             //send image
             printf("slave sending the image\n");
-            mpi_image_send(image, 0, TAG_DATA);
+            MPI_Send(image._data, image._height*image._width, MPI_DOUBLE, 0, TAG_DATA, MPI_COMM_WORLD);
         }
     }
 }
