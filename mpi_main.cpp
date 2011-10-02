@@ -127,7 +127,14 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &myid); // and this processes' rank is
 
     if (myid == 0) {
+        //start the timer
+        double start = (clock() / (double) CLOCKS_PER_SEC);
+
         master_program_main(stat, numprocs);
+
+        double finish = (clock() / (double) CLOCKS_PER_SEC) - start;
+        printf("Job done in %g seconds\n", finish);
+
     } else {
         slave_program_main(stat);
     }
@@ -135,5 +142,6 @@ int main(int argc, char *argv[]) {
     printf("process %i finished\n", myid);
     MPI_Finalize(); // MPI Programs end with MPI Finalize; this is a weak
     //synchronization point
+
     return 0;
 }
