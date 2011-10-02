@@ -13,6 +13,7 @@
 
 #define TAG_PSF 0
 #define TAG_DATA 1
+#define TAG_END 2
 
 using namespace std;
 
@@ -32,8 +33,8 @@ void master_program_main(MPI_Status stat, int numprocs) {
 
     //initilize which images have been/ are being processed
     int processing[numprocs];
-    int upto = 0;
-    int doneto = 0;
+    unsigned int upto = 0;
+    unsigned int doneto = 0;
 
     //start by sending an image to each slave
     for (int i = 1; i < numprocs; i++) {
@@ -41,7 +42,7 @@ void master_program_main(MPI_Status stat, int numprocs) {
         processing[i] = upto++;
 
         cimg_library::CImg<double> image = get_image(files, processing[i]);
-        printf("sent %s to slave %i\n", files[processing[i]].c_str(),i);
+        printf("sent %s to slave %i\n", files[processing[i]].c_str(), i);
         mpi_image_send(image, i, TAG_DATA);
     }
 
@@ -55,26 +56,29 @@ void master_program_main(MPI_Status stat, int numprocs) {
             if (flag == true) {
                 //get output image
                 cimg_library::CImg<double> output = mpi_image_receive(TAG_DATA, i, stat);
-                printf("master got %s back from slave %i and saved as output-%i\n",files[processing[i]].c_str(),i,processing[i]);
+                printf("master got %s back from slave %i and saved as output-%i\n", files[processing[i]].c_str(), i, processing[i]);
 
                 //save it
-                save_image(output, processing[i]);
+                //save_image(output, processing[i]);
 
                 doneto++;
-                
-                printf("upto %i of %i\n", upto, files.size());
-                if(upto != files.size()){
-                
-                processing[i] = upto++;
 
-                cimg_library::CImg<double> image = get_image(files, processing[i]);
-                printf("sent %s to slave %i\n", files[processing[i]].c_str(),i);
-                mpi_image_send(image, i, TAG_DATA);
-                }
-                else if(doneto == files.size()){
-                    all_done == true;
-                }
+                printf("up to %i, done to %i  of %i\n", upto, doneto, files.size());
+                if (upto != files.size()) {
 
+                    processing[i] = upto++;
+
+                    cimg_library::CImg<double> image = get_image(files, processing[i]);
+                    printf("sent %s to slave %i\n", files[processing[i]].c_str(), i);
+                    save_image(image, 1);
+                    mpi_image_send(image, i, TAG_DATA);
+                } else if (doneto == files.size()) {
+                    all_done = true;
+                    for (int i = 1; i < numprocs; i++) {
+                        int end = 0;
+                        MPI_Send(&end, 1, MPI_INT, i, TAG_END, MPI_COMM_WORLD);
+                    }
+                }
             }
         }
     }
@@ -88,23 +92,35 @@ void slave_program_main(MPI_Status stat) {
 
     while (true) {
         printf("slave starting\n");
-        //get new image
-        cimg_library::CImg<double> image = mpi_image_receive(TAG_DATA, 0, stat);
-        //process image
-        image = lucy_run(image, f_psf);
-        //send image
-        printf("slave sending the image\n");
-        mpi_image_send(image, 0, TAG_DATA);
+
+        int flag_image = false;
+        int flag_end = false;
+
+        while ((!flag_image) && (!flag_end)) {
+            MPI_Iprobe(0, TAG_DATA, MPI_COMM_WORLD, &flag_image, &stat);
+            MPI_Iprobe(0, TAG_END, MPI_COMM_WORLD, &flag_end, &stat);
+        }
+
+        //grab message and exit
+        if (flag_end) {
+            printf("killing slave\n");
+            int end;
+            MPI_Recv(&end, 1, MPI_INT, 0, TAG_END, MPI_COMM_WORLD, &stat);
+            break;
+        } else if (flag_image) {
+            //get new image
+            cimg_library::CImg<double> image = mpi_image_receive(TAG_DATA, 0, stat);
+                    save_image(image, 2);
+            //process image
+            image = lucy_run(image, f_psf);
+            //send image
+            printf("slave sending the image\n");
+            mpi_image_send(image, 0, TAG_DATA);
+        }
     }
-
-    //cimg_library::CImgDisplay main_disp(image, "Base Image");
-
-    //while (!main_disp.is_closed()) {
-    //}
 }
 
 int main(int argc, char *argv[]) {
-    char idstr[32];
     int numprocs;
     int myid;
 
@@ -122,6 +138,7 @@ int main(int argc, char *argv[]) {
         slave_program_main(stat);
     }
 
+    printf("process %i finished\n",myid);
     MPI_Finalize(); // MPI Programs end with MPI Finalize; this is a weak
     //synchronization point
     return 0;
