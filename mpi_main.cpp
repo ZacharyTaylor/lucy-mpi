@@ -32,12 +32,16 @@ void master_program_main(MPI_Status stat, int numprocs) {
     unsigned int upto = 0;
     unsigned int doneto = 0;
 
+    unsigned int line_upto = 0;
+    unsigned int line_doneto = 0;
+
+    cimg_library::CImg<double> image = get_image(files, processing[0]);
+    cimg_library::CImg<double> image_strip(psf._width, image._height);
+
     //start by sending an image to each slave
+
+
     for (int i = 1; i < numprocs; i++) {
-
-        processing[i] = upto++;
-
-        cimg_library::CImg<double> image = get_image(files, processing[i]);
         printf("sent %s to slave %i\n", files[processing[i]].c_str(), i);
         mpi_send_image(image, TAG_DATA, i);
     }
