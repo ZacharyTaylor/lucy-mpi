@@ -1,0 +1,5 @@
+\section{MPI}
+
+MPI which stands for message passing interface is a standardized system via which large parrallel programs can be created. It allows a programmer to easily write a program that can ran on a cluster cemputer making effective use of all of the cores.
+
+MPI works by creating a large number of threads that each have a unique id. These threads are only able to communicate with each other via messages. As all interaction between threads is sent via messages it makes no difference to the program if the two threads are running on the same cpu or are connected through a local network or the internet. 

@@ -15,18 +15,25 @@ using namespace std;
 
 void master_program_main(MPI_Status stat, int numprocs) {
 
+    double start_s = (clock() / (double) CLOCKS_PER_SEC);
+    double elapsed_s = 0;
+
     //get list of all images to process
     vector<string> files = vector<string > ();
     init_images(&files);
 
-    //get forier transform of psf
+    //get the psf
     cimg_library::CImg<double> psf = get_psf();
     printf("loaded the psf\n");
-    //send transformed psf to all the slaves
+
+    double start_psf = (clock() / (double) CLOCKS_PER_SEC);
+    //send psf to all the slaves
     for (int i = 1; i < numprocs; i++) {
         mpi_send_image(psf, TAG_PSF, i);
     }
-    printf("sent the psf\n");
+    double elapsed_psf = (clock() / (double) CLOCKS_PER_SEC) - start_psf;
+
+    printf("sent the psf in %.8f seconds\n",elapsed_psf);
     //initilize which images have been/ are being processed
     int processing[numprocs];
     unsigned int upto = 0;
@@ -44,6 +51,8 @@ void master_program_main(MPI_Status stat, int numprocs) {
         mpi_send_image(image, TAG_DATA, i);
     }
 
+    elapsed_s = (clock() / (double) CLOCKS_PER_SEC) - start_s;
+
     printf("master in while loop\n");
 
     bool all_done = false;
@@ -52,6 +61,9 @@ void master_program_main(MPI_Status stat, int numprocs) {
             int flag = false;
             MPI_Iprobe(i, TAG_DATA, MPI_COMM_WORLD, &flag, &stat);
             if (flag == true) {
+
+                start_s = (clock() / (double) CLOCKS_PER_SEC);
+
                 //get output image
                 cimg_library::CImg<double> output = mpi_receive_image(TAG_DATA, i, &stat);
                 printf("master got %s back from slave %i and saved as output-%i\n", files[processing[i]].c_str(), i, processing[i]);
@@ -76,16 +88,18 @@ void master_program_main(MPI_Status stat, int numprocs) {
                         MPI_Send(&end, 1, MPI_INT, i, TAG_END, MPI_COMM_WORLD);
                     }
                 }
+
+                elapsed_s += (clock() / (double) CLOCKS_PER_SEC) - start_s;
             }
         }
     }
-
-
+    printf("serial run time = %f seconds\n",elapsed_s);
 }
 
 void slave_program_main(MPI_Status stat) {
 
     CImg<double> psf = mpi_receive_image(TAG_PSF, 0, &stat);
+    double elapsed_p = 0;
 
     while (true) {
         printf("slave starting\n");
@@ -108,12 +122,15 @@ void slave_program_main(MPI_Status stat) {
             //get new image
             CImg<double> image = mpi_receive_image(TAG_DATA, 0, &stat);
             //process image
+            double start_p = (clock() / (double) CLOCKS_PER_SEC);
             image = lucy_run(image, psf);
+            elapsed_p += (clock() / (double) CLOCKS_PER_SEC) - start_p;
             //send image
             printf("slave sending the image\n");
             mpi_send_image(image, TAG_DATA, 0);
         }
     }
+    printf("parallel run time = %f seconds\n", elapsed_p);
 }
 
 int main(int argc, char *argv[]) {

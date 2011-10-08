@@ -1,0 +1,11 @@
+\section{Implemented code}
+
+The implemented solution utilized the functionallity of both MPI and OpenMP. The code executed in a series of steps as follows
+
+\item Load the psf
+\item Send the psf to all the processes using MPI
+\item Get a list of images present on the master computer in ./Images
+\item Send an image to each of the slave processes using MPI
+\item Each of the slaves processes the image using the Richardson-Lucy implemented in which OpenMP has been used to speed up the convolutions.
+\item The master retrives the image from the slave saves it
+\item The master sends the slave a new image

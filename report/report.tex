@@ -1,30 +1,24 @@
-\documentclass[a4paper,conference]{IEEEtran}
-
-\usepackage{cite}
+\documentclass[]{report}   % list options between brackets
+\usepackage{mathtools}
 \usepackage{graphicx}
-\usepackage[cmex10]{amsmath}
-\interdisplaylinepenalty=2500
-\usepackage[caption=false,font=footnotesize]{subfig}
-\usepackage{fixltx2e}
-\usepackage{hyperref}
 
-\input{mystyle}
-
+% type user-defined commands here
 \begin{document}
-  \input{frontmatter}
-  \input{introduction}
-  \input{marker_method}
-  \input{CV_Theroy}
-  \input{Implement_Solutions}
-  \input{Perform_Solution}
-  \input{Path_Folllowing}
-  \input{path_performance}
-  \input{future_work}
-  \input{Conclusion}
 
-  % Change to balance the columns on the last page
-  %\IEEEtriggeratref{2}
+\title{Enel429 Software Assignment 3}   % type title between braces
+\author{Zachary Taylor}         % type author(s) between braces
+\date{9th October, 2011}    % type date between braces
+\maketitle
 
-  \bibliographystyle{IEEEtran}
-  \bibliography{IEEEabrv,../complete}
+\include{introduction}
+\include{MPI}
+\include{OMP}
+\include{parallel}
+\include{code}
+\include{conclusion}
+
+\begin{thebibliography}{9}
+  % type bibliography here
+\end{thebibliography}
+
 \end{document}

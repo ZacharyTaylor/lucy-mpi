@@ -1,0 +1,9 @@
+\section{Open MP}
+
+OpenMP which stands for open multiprocessing is an API (Application program interface) that can be used for creating multithreaded programs. The interface allows for the exsplicit creation of threads and utilizes shared memory for the parallelism.
+
+The API is specified for C, C++ and Fortran, it works with most major platforms including Linux and Windows.It also acts to provide a standard for the use of shared memory parralelisation over a range of architectures.
+
+The system works by running a single master thread until the program encounters an area of the code specified as a parallel section a simple diagram representing this can be seen in Figure~\ref{OMP}. At this point the master thread spawns a new team of threads of which it is the master. The number of threads spawned depends on the IF clauses and for loops in the parallel section. It also depends on the maximum number of threads that have been set to be allowed to spawn. Once the thread reaches the end of the parallel section it acts as if this point is a barrier until the rest of the threads join it at which point the system returns to running only the master thread. Parallel sections may be specified inside other parallel sections to create more threads as required.
+
+For this project one of the key differences of OpenMP is that it can not be used on distributed memory parallel systems without use of other systems (such as MPI). This means that the deblurring would have to run on a single system increasing the minimum time that could be expected to be achieved through the limited parallisation to the code imposed by the limit of running on a single machine.

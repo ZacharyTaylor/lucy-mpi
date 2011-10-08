@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20001102//EN"
+   "http://www.w3.org/TR/2000/CR-SVG-20001102/DTD/svg-20001102.dtd">
+<svg  width="630" height="434" style="stroke-linecap:round; stroke-linejoin:round">
+<g transform="scale(0.1)" style="font-family:Helvetica">
+   <rect x="0" y="0" width="6298" height="4330" style="fill:white; stroke:rgb(224,224,224); stroke-width:1;"/>
+   <rect x="984" y="394" width="4527" height="3148" style="fill:white; stroke:white; stroke-width:1;"/>
+   <line x1="984" y1="3543" x2="5512" y2="3543" style="stroke:black; stroke-width:8;"/>
+   <text x="3248" y="3972" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:142; text-anchor:middle ">Cores</text>
+   <line x1="984" y1="3543" x2="984" y2="3621" style="stroke:black; stroke-width:8;"/>
+   <text x="984" y="3794" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:118; text-anchor:middle ">0</text>
+   <line x1="1739" y1="3543" x2="1739" y2="3621" style="stroke:black; stroke-width:8;"/>
+   <text x="1739" y="3794" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:118; text-anchor:middle ">20</text>
+   <line x1="2493" y1="3543" x2="2493" y2="3621" style="stroke:black; stroke-width:8;"/>
+   <text x="2493" y="3794" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:118; text-anchor:middle ">40</text>
+   <line x1="3248" y1="3543" x2="3248" y2="3621" style="stroke:black; stroke-width:8;"/>
+   <text x="3248" y="3794" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:118; text-anchor:middle ">60</text>
+   <line x1="4003" y1="3543" x2="4003" y2="3621" style="stroke:black; stroke-width:8;"/>
+   <text x="4003" y="3794" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:118; text-anchor:middle ">80</text>
+   <line x1="4757" y1="3543" x2="4757" y2="3621" style="stroke:black; stroke-width:8;"/>
+   <text x="4757" y="3794" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:118; text-anchor:middle ">100</text>
+   <line x1="5512" y1="3543" x2="5512" y2="3621" style="stroke:black; stroke-width:8;"/>
+   <text x="5512" y="3794" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:118; text-anchor:middle ">120</text>
+   <line x1="984" y1="394" x2="984" y2="3543" style="stroke:black; stroke-width:8;"/>
+   <text x="394" y="2016" dy="0" transform="rotate(-90,394,2016)" style="font-family:Helvetica;
+    fill:black; stroke:black; font-size:142; text-anchor:middle ">Time (days)</text>
+   <line x1="984" y1="3543" x2="905" y2="3543" style="stroke:black; stroke-width:8;"/>
+   <text x="828" y="3582" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:118; text-anchor:end ">0</text>
+   <line x1="984" y1="2913" x2="905" y2="2913" style="stroke:black; stroke-width:8;"/>
+   <text x="828" y="2952" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:118; text-anchor:end ">500</text>
+   <line x1="984" y1="2283" x2="905" y2="2283" style="stroke:black; stroke-width:8;"/>
+   <text x="828" y="2322" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:118; text-anchor:end ">1000</text>
+   <line x1="984" y1="1654" x2="905" y2="1654" style="stroke:black; stroke-width:8;"/>
+   <text x="828" y="1693" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:118; text-anchor:end ">1500</text>
+   <line x1="984" y1="1024" x2="905" y2="1024" style="stroke:black; stroke-width:8;"/>
+   <text x="828" y="1063" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:118; text-anchor:end ">2000</text>
+   <line x1="984" y1="394" x2="905" y2="394" style="stroke:black; stroke-width:8;"/>
+   <text x="828" y="433" dy="0" style="font-family:Helvetica; fill:black; stroke:black; 
+   font-size:118; text-anchor:end ">2500</text>
+   <line x1="984" y1="394" x2="5512" y2="394" style="stroke:black; stroke-width:8;"/>
+   <line x1="5512" y1="394" x2="5512" y2="3543" style="stroke:black; stroke-width:8;"/>
+   <polyline points="1022 687 1060 2100 1097 2570 1135 2806 1173 2947 1211 3041 1248 3108 1286 3159 
+      1324 3198 1362 3229 1399 3255 1437 3277 1475 3295 1512 3310 1550 3324 1626 3346 1663 3355 1739 3371 
+      1777 3377 1814 3383 1852 3389 1890 3394 1927 3399 2041 3411 2078 3414 2116 3418 2192 3424 2229 3426 
+      2267 3429 2343 3433 2380 3436 2418 3438 2456 3439 2493 3441 2569 3445 2607 3446 2644 3448 2720 3450 
+      2758 3452 2795 3453 2871 3455 2908 3457 3022 3460 3059 3461 3097 3461 3173 3463 3210 3464 3286 3466 
+      3323 3466 3399 3468 3437 3468 3474 3469 3512 3470 3550 3470 3588 3471 3625 3472 3663 3472 3701 3473 
+      3739 3473 3776 3474 3814 3474 3852 3475 3889 3475 3927 3476 3965 3476 4003 3477 4078 3477 4116 3478 
+      4154 3478 4191 3479 4267 3479 4304 3480 4342 3480 4380 3481 4455 3481 4493 3482 4606 3482 4644 3483 
+      4719 3483 4757 3484" style = "fill:none; stroke:rgb(0,0,128); stroke-width:16;"/>
+</g>
+</svg>
