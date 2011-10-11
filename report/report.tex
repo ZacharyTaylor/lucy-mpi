@@ -1,6 +1,7 @@
 \documentclass[]{report}   % list options between brackets
-\usepackage{mathtools}
+\usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{subfig}
 
 % type user-defined commands here
 \begin{document}
@@ -11,11 +12,12 @@
 \maketitle
 
 \include{introduction}
-\include{MPI}
-\include{OMP}
-\include{parallel}
-\include{code}
-\include{conclusion}
+\input{lucy}
+\input{MPI}
+\input{OMP}
+\input{parallel}
+\input{code}
+\input{Conclusion}
 
 \begin{thebibliography}{9}
   % type bibliography here

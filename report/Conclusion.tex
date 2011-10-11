@@ -1,3 +1,12 @@
 \section{Conclusion}
 
-Three computer vision solutions were looked at for tracking a marker for use in allowing a kart to follow a lead vehicle. Colour detection was found to be light weight, robust to movement and reasonably accurate in constant lighting (error of less than 7\%). It was however plagued by a large sensitivity to lighting changes that made it unusable as a robust marker location system. The SURF algorithm ran slowly and its inability to handle distances over 1m and even small amounts of motion blur made it inappropriate for the application of being mounted to a moving vehicle. Chessboard detection was the only system that was robust enough to detect a marker and give its position reliability. It was slightly hindered by it inability to deal with large amounts of motion blur and large distances. The output of these systems were combined with sensors measuring the speed and wheel angle of the kart to produce a system that followed the path the marker had taken rather than just driving at the marker giving an accurate following method that could in the tests conducted effectively follow a marker placed on a leading vehicle. This following method was never tested on the kart however due to the kart’s drive by wire systems not being finished before the end of the project.
+Three options appear particularly good value depending on how pressing the time constraints of the task are. All three of the options make use of the MPI program due to its superior value for money.
+
+Option 1) 50 days for \$12000 using the Amazon EC2 server and 290 EC2 processors. This option emphicises speed over everything else with as many cores as will make any cost effective difference being used to get things done as fast as possiable
+
+Option 2) 110 days for \$6000 using six 3.0 Ghz quad-core machines brought for the task. This option is a balance between time and budget that also has the bonus of providng the company with six high end computers at the end of the project that can either be reused or sold to gian back some of the invested money.
+
+Option 3) 305 days for \$1820 using the Amazon EC2 server and 20 EC2 processors. This option looks at doing the task for as little as possible and takes advantage of the large 1 year discont that Amazon offers. As a bonus this would also give the company an extra 60 days of processor time to run other tasks.  
+
+
+My recommendation is the second option as this balances the speed of the data with a low price.

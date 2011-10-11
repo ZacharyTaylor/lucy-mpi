@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <CImg.h>
+#include "CImg.h"
 #include <sstream>
 
 using namespace std;
@@ -26,7 +26,7 @@ void save_image(cimg_library::CImg<double> output, int i);
 cimg_library::CImg<double> get_psf(void);
 
 /**
- * Loads the ith image
+ * Loads the ith image from ./Images
  * @param files list of all the image files paths
  * @param i the image in the list to load
  * @return the ith image
