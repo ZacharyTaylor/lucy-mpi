@@ -1,3 +1,7 @@
+/**
+ * The lucy richardson image deblurring algorithem
+ */
+
 #ifndef LUCY_H
 #define	LUCY_H
 
