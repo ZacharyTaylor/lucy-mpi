@@ -17,7 +17,7 @@ using namespace std;
  * @param output the image to save
  * @param i the # in the image name
  */
-void save_image(cimg_library::CImg<double> output, int i);
+void save_image(cimg_library::CImg<double> output, string name);
 
 /**
  * Loads the psf file psf.bmp from the same dir as the program

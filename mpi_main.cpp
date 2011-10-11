@@ -1,138 +1,16 @@
-/*
-"Hello World" Type MPI Test Program
- */
-#include <mpi.h>
-#include <CImg.h>
-#include <stdio.h>
-#include <string.h>
-#include <vector>
+/**
+ * MPI implementation of the Richardson-Lucy Algorithem. The master loads in the
+ * images in ./images and passes them to the slaves for processsing. Upon being
+ * returned the images are saved to ./Output. The program accepts .bmp and .jpg
+ * images.
+ * The images rather then there location are passed so that the slaves do not
+ * require access to the location where the images are being read from and
+ * stored to*/
 
-#include "lucy.h"
-#include "files_io.h"
-#include "send_receive.h"
+//required includes
+#include "master_slave.h"
 
-using namespace std;
-
-void master_program_main(MPI_Status stat, int numprocs) {
-
-    double start_s = (clock() / (double) CLOCKS_PER_SEC);
-    double elapsed_s = 0;
-
-    //get list of all images to process
-    vector<string> files = vector<string > ();
-    init_images(&files);
-
-    //get the psf
-    cimg_library::CImg<double> psf = get_psf();
-    printf("loaded the psf\n");
-
-    double start_psf = (clock() / (double) CLOCKS_PER_SEC);
-    //send psf to all the slaves
-    for (int i = 1; i < numprocs; i++) {
-        mpi_send_image(psf, TAG_PSF, i);
-    }
-    double elapsed_psf = (clock() / (double) CLOCKS_PER_SEC) - start_psf;
-
-    printf("sent the psf in %.8f seconds\n",elapsed_psf);
-    //initilize which images have been/ are being processed
-    int processing[numprocs];
-    unsigned int upto = 0;
-    unsigned int doneto = 0;
-
-    //start by sending an image to each slave
-    for (int i = 1; i < numprocs; i++) {
-
-        processing[i] = upto++;
-
-        cimg_library::CImg<double> image = get_image(files, processing[i]);
-
-
-        printf("sent %s to slave %i\n", files[processing[i]].c_str(), i);
-        mpi_send_image(image, TAG_DATA, i);
-    }
-
-    elapsed_s = (clock() / (double) CLOCKS_PER_SEC) - start_s;
-
-    printf("master in while loop\n");
-
-    bool all_done = false;
-    while (!all_done) {
-        for (int i = 1; i < numprocs; i++) {
-            int flag = false;
-            MPI_Iprobe(i, TAG_DATA, MPI_COMM_WORLD, &flag, &stat);
-            if (flag == true) {
-
-                start_s = (clock() / (double) CLOCKS_PER_SEC);
-
-                //get output image
-                cimg_library::CImg<double> output = mpi_receive_image(TAG_DATA, i, &stat);
-                printf("master got %s back from slave %i and saved as output-%i\n", files[processing[i]].c_str(), i, processing[i]);
-
-                //save it
-                save_image(output, processing[i]);
-
-                doneto++;
-
-                printf("up to %i, done to %i  of %i\n", upto, doneto, files.size());
-                if (upto != files.size()) {
-
-                    processing[i] = upto++;
-
-                    cimg_library::CImg<double> image = get_image(files, processing[i]);
-                    printf("sent %s to slave %i\n", files[processing[i]].c_str(), i);
-                    mpi_send_image(image, TAG_DATA, i);
-                } else if (doneto == files.size()) {
-                    all_done = true;
-                    for (int i = 1; i < numprocs; i++) {
-                        int end = 0;
-                        MPI_Send(&end, 1, MPI_INT, i, TAG_END, MPI_COMM_WORLD);
-                    }
-                }
-
-                elapsed_s += (clock() / (double) CLOCKS_PER_SEC) - start_s;
-            }
-        }
-    }
-    printf("serial run time = %f seconds\n",elapsed_s);
-}
-
-void slave_program_main(MPI_Status stat) {
-
-    CImg<double> psf = mpi_receive_image(TAG_PSF, 0, &stat);
-    double elapsed_p = 0;
-
-    while (true) {
-        printf("slave starting\n");
-
-        int flag_image = false;
-        int flag_end = false;
-
-        while ((!flag_image) && (!flag_end)) {
-            MPI_Iprobe(0, TAG_DATA, MPI_COMM_WORLD, &flag_image, &stat);
-            MPI_Iprobe(0, TAG_END, MPI_COMM_WORLD, &flag_end, &stat);
-        }
-
-        //grab message and exit
-        if (flag_end) {
-            printf("killing slave\n");
-            int end;
-            MPI_Recv(&end, 1, MPI_INT, 0, TAG_END, MPI_COMM_WORLD, &stat);
-            break;
-        } else if (flag_image) {
-            //get new image
-            CImg<double> image = mpi_receive_image(TAG_DATA, 0, &stat);
-            //process image
-            double start_p = (clock() / (double) CLOCKS_PER_SEC);
-            image = lucy_run(image, psf);
-            elapsed_p += (clock() / (double) CLOCKS_PER_SEC) - start_p;
-            //send image
-            printf("slave sending the image\n");
-            mpi_send_image(image, TAG_DATA, 0);
-        }
-    }
-    printf("parallel run time = %f seconds\n", elapsed_p);
-}
-
+//the main program
 int main(int argc, char *argv[]) {
     int numprocs;
     int myid;
@@ -145,22 +23,25 @@ int main(int argc, char *argv[]) {
     //world is
     MPI_Comm_rank(MPI_COMM_WORLD, &myid); // and this processes' rank is
 
+    //if a master run this
     if (myid == 0) {
-        //start the timer
+        //start the total time timer
         double start = (clock() / (double) CLOCKS_PER_SEC);
 
         master_program_main(stat, numprocs);
 
+        //stop the total time timer
         double finish = (clock() / (double) CLOCKS_PER_SEC) - start;
         printf("Job done in %g seconds\n", finish);
 
-    } else {
+    }
+    //else a slave so run this
+    else {
         slave_program_main(stat);
     }
 
     printf("process %i finished\n", myid);
-    MPI_Finalize(); // MPI Programs end with MPI Finalize; this is a weak
-    //synchronization point
+    MPI_Finalize(); 
 
     return 0;
 }

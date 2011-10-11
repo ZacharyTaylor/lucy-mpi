@@ -5,12 +5,11 @@
  * @param output the image to save
  * @param i the # in the image name
  */
-void save_image(cimg_library::CImg<double> output, int i){
-    string outname = "Output/output-";
+void save_image(cimg_library::CImg<double> output, string name){
+    string outname = "Output/";
     stringstream ss;
-    ss << i;
+    ss << name;
     outname.append(ss.str());
-    outname.append(".bmp");
     output.save(outname.c_str());
 }
 
