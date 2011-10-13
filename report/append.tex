@@ -1,0 +1,36 @@
+\section*{Appendicies}
+
+\subsection*{Parallelisation calculations }
+
+according to armdales law the fraction of time the program will take is defined by
+\[
+ (1-P) + \frac{P}{S}
+ \]
+ 
+for MPI P = 0.989, for OpenMP P = 0.997 and S = number of cores thus
+
+\[
+ MPITime = ((0.011) + \frac{0.989}{Cores})*Time
+ \]
+ 
+ and
+ 
+\[
+ OpenMPTime = ((0.003) + \frac{0.997}{Cores})*Time
+ \]
+ 
+ For calculating the cost of the systems.
+ 
+\[
+ Cost = InitalCost + CostPerDay * Time
+ \] 
+ 
+ The Time the system ran for was given by the previous equations for MPITime and OpenMPTime rearranging this to be in terms of cores gave
+ 
+\[
+Cores = \frac{0.989}{\frac{MPITime}{Time} - 0.011}
+\]
+ 
+ For the Amazon EC2 system there was no inital cost and the cost per hour was \$1.60. The \$1.60 provided a system that had twenty cores with each core running at \%80 the speed of the inital test systems. This gave a cost per day of \(1.60 * 24 * 0.8 / 20 = 1.536\).
+ 
+ This meant for the MPI solution the cost 
