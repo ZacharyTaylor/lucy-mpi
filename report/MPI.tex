@@ -1,6 +1,6 @@
-\section{Parallel programming API's}
+\section*{Parallel Programming Options}
 
-\subsection{MPI}
-MPI which stands for message passing interface is a standardized system via which large parallel programs can be created. It allows a programmer to easily write a program that can run on a distributed system allowing the program to run on a cluster computer. MPI is an API that can be used with a large number of languages including C, C++, FORTRAN and python. The MPI system is highly portable with implementations on most distributed memory architectures, it also offers high speeds as these implementations are optimized for the systems they run on.
+\subsection*{MPI}
+MPI which stands for message passing interface is a standardized system via which large parallel programs can be created. It allows a programmer to easily write a program that can run on a distributed system allowing the program to run on a cluster computer. MPI is an API that can be used with a large number of languages including C, C++, FORTRAN and python. The MPI system is highly portable with implementations on most distributed memory architectures, it also offers high speeds as these implementations are optimized for the systems they run on \cite{mpi}.
 
-MPI works by creating a large number of processes that each have a unique id. These processes are only able to communicate with each other via messages. As all interaction between threads is sent via messages it makes no difference to the program if the two processes are running on the same CPU or are connected through a local network or the internet. This is further enforced by the fact that the original MPI-1 model had no concept of shared memory.
+MPI works by creating a large number of processes that each have a unique id. These processes are only able to communicate with each other via messages. As all interaction between threads is sent via messages it makes no difference to the program if the two processes are running on the same CPU or are connected through a local network or the internet. This is further enforced by the fact that the original MPI-1 model had no concept of shared memory \cite{mpi}.

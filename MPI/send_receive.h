@@ -7,7 +7,7 @@
 
 //includes
 #include <mpi.h>
-#include "CImg.h"
+#include "../CImg/CImg.h"
 
 using namespace cimg_library;
 

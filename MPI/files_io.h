@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include "CImg.h"
+#include "../CImg/CImg.h"
 #include <sstream>
 
 using namespace std;

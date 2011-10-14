@@ -5,7 +5,7 @@
 #ifndef LUCY_H
 #define	LUCY_H
 
-#include "CImg.h"
+#include "../CImg/CImg.h"
 
 //number of iterations to run
 #define ITERATIONS 10

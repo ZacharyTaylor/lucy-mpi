@@ -1,13 +1,16 @@
-\documentclass[]{report}   % list options between brackets
+\documentclass[a4paper]{report}   % list options between brackets
 \usepackage{fullpage}
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{subfig}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage{fixltx2e}
 
 % type user-defined commands here
 \begin{document}
 
-\title{Enel429 Software Assignment 3}   % type title between braces
+\title{Enel429 Software Assignment 4}   % type title between braces
 \author{Zachary Taylor}         % type author(s) between braces
 \date{9th October, 2011}    % type date between braces
 \maketitle
@@ -21,8 +24,7 @@
 \input{Conclusion}
 \include{append}
 
-\begin{thebibliography}{9}
-  % type bibliography here
-\end{thebibliography}
+\bibliographystyle{IEEEtran}
+\bibliography{report}
 
 \end{document}

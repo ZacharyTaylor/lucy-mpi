@@ -1,36 +1,60 @@
-\section*{Appendicies}
+\section*{Appendices}
 
 \subsection*{Parallelisation calculations }
 
-according to armdales law the fraction of time the program will take is defined by
+According to Amdahl's law the fraction of time the program will take is defined by
 \[
  (1-P) + \frac{P}{S}
  \]
  
-for MPI P = 0.989, for OpenMP P = 0.997 and S = number of cores thus
+for MPI P = 0.989, for OpenMP P = 0.997 and S = number of cores and the run time would take 2833 days on the test system thus
 
 \[
- MPITime = ((0.011) + \frac{0.989}{Cores})*Time
+ MPITime = ((0.011) + \frac{0.989}{Cores})*2833
  \]
  
  and
  
 \[
- OpenMPTime = ((0.003) + \frac{0.997}{Cores})*Time
+ OpenMPTime = ((0.003) + \frac{0.997}{Cores})*2833
  \]
  
- For calculating the cost of the systems.
+ For calculating the cost of the systems if they were given a set time to run for.
  
 \[
- Cost = InitalCost + CostPerDay * Time
+ Cost = (InitalCost + CostPerDay * Time)*Cores
  \] 
  
  The Time the system ran for was given by the previous equations for MPITime and OpenMPTime rearranging this to be in terms of cores gave
  
 \[
-Cores = \frac{0.989}{\frac{MPITime}{Time} - 0.011}
+Cores = \frac{0.989}{\frac{MPITime}{2833} - 0.011}
 \]
+
+for MPI and
+
+\[
+Cores = \frac{0.997}{\frac{OpenMPTime}{2833} - 0.003}
+\]
+
+for OpenMP 
  
- For the Amazon EC2 system there was no inital cost and the cost per hour was \$1.60. The \$1.60 provided a system that had twenty cores with each core running at \%80 the speed of the inital test systems. This gave a cost per day of \(1.60 * 24 * 0.8 / 20 = 1.536\).
+ For the Amazon EC2 system there was no initial cost and the cost per hour was \$1.60. The \$1.60 provided a system that had twenty cores with each core running at \%80 the speed of the initial test systems. This gave a cost per day of \(1.60 * 24 * 0.8 / 20 = 1.536\).
  
- This meant for the MPI solution the cost 
+ This meant for the MPI solution on the EC2 servers the cost was given by
+ 
+\[
+Cost = 1.536 * \frac{0.989}{\frac{MPITime}{2833} - 0.011} * MPITime
+\]
+
+For buying computers they cost 1000 dollars per system where each system had four cores and each core had 150\% of the power of the test system. These systems had no cost per day after the initial cost (power costs taken as minimal). This meant that the cost per core was \(\frac{2}{3} * 1000 * \frac{1}{4} = 167 \). Thus 
+
+\[
+Cost = 167 * \frac{0.989}{\frac{MPITime}{2833} - 0.011}
+\]
+
+For OpenMP the cost of the systems was formed from fitting an exponent to the four data points of \$1000 for one processor, \$4000 for two, \$15000 for three and \$40000 for for. The equation of \(45257700000*(x^{-2.70694})\) fit the data fairly well. From this the cost for the OpenMP solution was calculated as 
+
+\[
+Cost = 45257700000*(x^{-2.70694}) * \frac{0.989}{\frac{MPITime}{2833} - 0.011}
+\]

@@ -1,7 +1,7 @@
 /*
 "Hello World" Type MPI Test Program
  */
-#include <CImg.h>
+#include "../CImg/CImg.h"
 #include <stdio.h>
 #include <string.h>
 #include <vector>

@@ -1,4 +1,4 @@
-OBJS = lucy.o send_receive.o omp_main.o files_io.o
+OBJS = lucy.o omp_main.o files_io.o
 CXX = mpicxx
 DEBUG = -g
 CXXFLAGS= -Wall -c $(DEBUG) -O2 -L/usr/X11R6/lib -lm -lpthread -lX11 -fopenmp
@@ -9,9 +9,6 @@ lucy-omp : $(OBJS)
 
 lucy.o: lucy.cpp 
 	$(CXX) $(CXXFLAGS) lucy.cpp
-
-send_receive.o: send_receive.cpp 
-	$(CXX) $(CXXFLAGS) send_receive.cpp
 
 omp_main.o: omp_main.cpp 
 	$(CXX) $(CXXFLAGS) omp_main.cpp

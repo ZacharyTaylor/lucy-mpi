@@ -1,40 +1,40 @@
-\section{Implemented code}
+\section*{Implemented code}
 
-Two solutions were implemented one using MPI and one using OpenMP. The MPI solution sent one image out to each core of a processor in a distributed network where as the OpenMP solution operated on a single shared-memory machine. The MPI solution had the advantage of being able to run on a series of distributed machines and so able to use more cores to complete faster. The OpenMP solution had the advantage of less overhead in the form of transferring data.
+Two solutions were implemented one using MPI and one using OpenMP. The MPI solution sent one image out to each core of a processor in a distributed network where as the OpenMP solution operated on a single shared-memory machine and split each image up. The MPI solution had the advantage of being able to run on a series of distributed machines and so able to use more cores to complete faster. The OpenMP solution had the advantage of less overhead in the form of transferring data.
 
-\subsection{MPI implementation}
+\subsection*{MPI implementation}
 The MPI solution worked by using the following steps.
 
 \begin{enumerate}
 	\item Create the master and n slave processes
-	\item Load the psf from ./psf.bmp on the master computer
-	\item Send the psf to all the slaves
+	\item Load the PSF from ./psf.bmp on the master computer
+	\item Send the PSF to all the slaves
 	\item Get a list of all the images present on the master computer in ./Images/
 	\item Send an image from the master to each of the slave processes.
-	\item Each of the slaves processes the image using the Richardson-Lucy implemention.
-	\item The master retrives the image from the slave and saves it to ./Output/
+	\item Each of the slaves processes the image using the Richardson-Lucy implementation.
+	\item The master retrieves the image from the slave and saves it to ./Output/
 	\item The master sends the slave a new image
 \end{enumerate}
 
-In this implemention all the sending and receiving is done syncronsously with the exception of the retriving of the processed images from the slave. This retriving is made asyncronous so that if one of the slaves finishs faster then one that was started before it there is no delay as it waits for the slave before it to finish and send its image.
+In this implementation all the sending and receiving is done synchronously with the exception of the retrieving of the processed images from the slave and the sending of a new image to it. This retrieving is made asynchronous so that if one of the slaves finishes faster then one that was started before it there is no delay as it waits for the slave before it to finish and send its image.
 
-\subsection{OpenMP implementation}
+\subsection*{OpenMP implementation}
 The OpenMP solution worked by using the following steps.
 
 \begin{enumerate}
-	\item Load the psf from ./psf.bmp
+	\item Load the PSF from ./psf.bmp
 	\item Get a list of all the images present in ./Images/
 	\item load the first image
-	\item run the image using the Richardson-Lucy implemention.
+	\item run the image using the Richardson-Lucy implementation.
 	\item Saves the output to ./Output/
 	\item Get the next image
 \end{enumerate}
 
-The parallelization of this program occoured in two places. First during the choosing of the image to run the Richardson-Lucy algorithem on and secondly during the convolutions. The Lucy-Richardson algorithem was written so that it used a series of for loops for the convolutions rather then a convolution function (such as that provided by the CImg libraries). This meant that for each pixel and colour channel the value could be found in its own thread and combined at the end of the convolution running potentially up to 1024x1024x3 threads.
+The parallelisation of this program occurred in two places. First during the choosing of the image to run the Richardson-Lucy algorithm on and secondly during the convolutions. The Lucy-Richardson algorithm was written so that it used a series of for loops for the convolutions rather then a convolution function (such as that provided by the CImg libraries). This meant that for each pixel and colour channel the value could be found in its own thread and combined at the end of the convolution running potentially up to 1024x1024x3 threads.
 
-\subsection{Implementation parallisation}
+\subsection*{Implementation Parallelisation}
 
-In the code the data only exsits stored on one hard drive and so all the loading and saving to the hard drive could not occour in parallel. In the MPI solution as all the messages went to and from the master this was also a serial bottleneck. To find out how long these sections that would have to be executed in serial were a test was conducted. Timers were first inserted around these serial sections and then the code was set processing 16 1024 by 1024 pixel images  using a 3 by 3 psf.The computer used had a 2.0 GHz dual core processor. The results of this test can be seen summarised in Table~\ref{speed}
+In the code the data only exists stored on one hard drive and so all the loading and saving to the hard drive could not occur in parallel. In the MPI solution as all the messages went to and from the master this was also a serial bottleneck. To find out how long these sections that would have to be executed in serial were a test was conducted. Timers were first inserted around these serial sections and then the code was set processing 16 1024 by 1024 pixel images using a 3 by 3 PSF. The computer used had a 2.0 GHz dual core processor. The results of this test can be seen summarised in Table~\ref{speed}
 
 \begin{table}[h!]
 	\caption{Parallel and serial time for code (all time in seconds)}
@@ -51,12 +51,12 @@ In the code the data only exsits stored on one hard drive and so all the loading
 
 From the results it can be seen that the OpenMP implementation spent slightly less time in the serial section as was expected. Something that was not expected however was the large time reduction in the overall time of the OpenMP program with it finishing 16 seconds faster then the MPI solution. This may have been due to the extra MPI overhead or may have been caused by the optimizing compiler doing a better job with the message passing removed. From the test it was also found that each image took roughly 23 seconds to process and so to process all ten million images would require roughly 68000 hours of machine time to complete or 2833 days.
 
-Using armdales law the speed up of the process from additional cores can be given by
+Using Amdahl's law \cite{am} the speed up of the process from additional cores can be given by
 \[
  \frac{1}{(1-P) + \frac{P}{S}}
 \]
 
-Where P is the amount of parrallizable code (98.9\% and 99.7\% in this case) and S is the number of processors. The amount of time in days to complete the calculation for both implementations compared to the number of cores used can be shown in Figure~\ref{mpi-time-cores}. As can be obsereved both implementations take roughly the same time. The time for one core is 2833 days, ten cores take 310 days, 20 cores take 171 days, 50 cores take 90 days and 100 cores take 58 days. Beyond this point the speed up from additional cores becomes negligible as the unparralizable sections of code take 31 days to execute. 
+Where P is the amount of parallelisable code (98.9\% and 99.7\% in this case) and S is the number of processors. The amount of time in days to complete the calculation for both implementations compared to the number of cores used can be shown in Figure~\ref{mpi-time-cores}. As can be observed both implementations take roughly the same time. The time for one core is 2833 days, ten cores take 310 days, 20 cores take 171 days, 50 cores take 90 days and 100 cores take 58 days. Beyond this point the speed up from additional cores becomes negligible as the unparallelisable sections of code take 31 days to execute for the MPI solution. 
 
 \begin{figure}[ht]
 	\begin{center}
@@ -66,7 +66,7 @@ Where P is the amount of parrallizable code (98.9\% and 99.7\% in this case) and
 	\label{mpi-time-cores}
 \end{figure}
 
-For running the system the hardware required has to either be rented or brought. A desktop unit with  one 3.0 GHz quad core CPU costs around \$1000 dollars, a dual core machine costs around \$4000, a three core around \$15000 and a quad core machine costs around \$40000. For rent the Amazon EC2 service appeared to be the cheapest of the available options charging \$1.60 per hour for use of the High-CPU Extra Large Instance which provides the following 
+For running the system the hardware required has to either be rented or brought. A desktop unit with  one 3.0 GHz quad core CPU costs around \$1000 dollars \cite{price}, a dual core machine costs around \$4000, a three core around \$15000 and a quad core machine costs around \$40000 \cite{price}. For rent the Amazon EC2 service \cite{ec2} appeared to be the cheapest of the available options charging \$1.60 per hour for use of the High-CPU Extra Large Instance which provides the following 
 
 \begin{itemize}
 \item 7 GB of memory
@@ -76,9 +76,9 @@ For running the system the hardware required has to either be rented or brought.
 \item I/O Performance: High (1 GigaBit ethernet)
 \end{itemize}
 
-The EC2 compute units the performance is measured in is equivalent to a 1.0-1.2 GHz 2007 Opteron or 2007 Xeon processor. These processors have roughly 60\% of the processing power of one of the test computers cores. From this information the cost of hiring and buying was calculated for a set time in which the task has to be completed. For the MPI solution both hiring amazon EC2 cores and buying multiple single CPU computers were looked at. For the OpenMP solution as shared memory was required a single machine with varing numbers of CPUs was looked at. Figure~\ref{mpi-time-money} shows the results of these calculations. Times below 40 days were not shown as the costs quickly became totally infeasible. It can be noted that for processing times longer then 100 days buying units for MPI becomes more economical then renting thanks to the one off cost rather then the cost per hour for the cpu time. It should be metioned that the cloud also offers 1 year of use for the much reduced price of \$1820.
+For the EC2 compute units the performance is equivalent to a 1.0-1.2 GHz 2007 Opteron or 2007 Xeon processor. These processors have roughly 60\% of the processing power of one of the test computers cores. From this information the cost of hiring and buying was calculated for a set time in which the task has to be completed. For the MPI solution both hiring Amazon EC2 cores and buying multiple single CPU computers were looked at. For the OpenMP solution as shared memory was required a single machine with varying numbers of CPUs was looked at. Figure~\ref{mpi-time-money} shows the results of these calculations. Times below 40 days were not shown as the costs quickly became totally infeasible. It can be noted that for processing times longer then 100 days buying units for MPI becomes more economical then renting thanks to the one off cost rather then the cost per hour for the CPU time. It should be mentioned that the cloud also offers 1 year of use for the much reduced price of \$1820.
 
-From the graph it can be seen the shared memory element of OpenMp meant that its systems are not in the same price range as MPI and so it can be discounted as a viable solution. The full working of the equations used can be found in the appendicies
+From the graph it can be seen the shared memory element of OpenMP meant that its systems are not in the same price range as MPI and so it can be discounted as a viable solution. The full workings for each of the equations formed in calculating and graphing the costs of the systems can be found under parallelisation calculations in the appendices.
 
 \begin{figure}[ht]
 	\begin{center}
@@ -89,8 +89,8 @@ From the graph it can be seen the shared memory element of OpenMp meant that its
 \end{figure}
 
 
-\subsection{Cluster testing}
-To see how accurate the predictions of how well the code matched up with reality the MPI code was run on a cluster. 16 1024 by 1024 pixel images were processed using 1, 2, 4, 8, 16 cores. The results can be shown in Table~\ref{shit}. The basic form of Armdales law used on the theoretical results was then applied to these results with the value for the percent of code that had to run in serial varied to give the best fit. From this a value of 96.27\% was found which fit the data with an \(r^2\) value of 0.9966 showing an exceptionally strong correlation. These points and the trend-line can be seen plotted in Figure~\ref{real_data}. These results differed slightly from the previous tests that predicted a value of 98.9\%. 
+\subsection*{Cluster testing}
+To see how accurate the predictions of how well the code matched up with reality the MPI code was run on a cluster. 16 1024 by 1024 pixel images were processed using 1, 2, 4, 8, 16 cores. The results can be shown in Table~\ref{shit}. The basic form of Amdahl's law used on the theoretical results was then applied to these results with the value for the percent of code that had to run in serial varied to give the best fit. From this a value of 96.27\% was found which fit the data with an \(r^2\) value of 0.9966 showing an exceptionally strong correlation. These points and the trend-line can be seen plotted in Figure~\ref{real_data}. These results differed slightly from the previous tests that predicted a value of 98.9\%. 
 
 \begin{table}[h]
 	\caption{Performance of code on cluster test (all times in seconds)}
@@ -116,4 +116,4 @@ To see how accurate the predictions of how well the code matched up with reality
 	\label{real_data}
 \end{figure}
 
-While currently the performance of MPI code running on the cluster is slightly slower than that found to be possible by measuring IO operations I am confident that if the structure  of the MPI code was examined the causes for these slow downs that are causing the extra sections of serial execution could be found and changed so that the code could run as quickly as possible.
+While currently the performance of MPI code running on the cluster is slightly slower than that found to be possible by measuring IO operations I am confident that if the structure of the MPI code was examined the causes for these slow downs that are causing the extra sections of serial execution could be found and changed so that the code could run at similar speeds to those predicted.
